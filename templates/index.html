@@ -30,26 +30,28 @@
             attribution: '© OpenStreetMap contributors'
         }).addTo(map);
 
-        // Fetch the GeoJSON data from Flask endpoint
-        //   fetch('/geojson')
-        //     .then(response => response.json())
-        //     .then(data => {
-        //       // Once we have GeoJSON, add it to the map
-        //       const geojsonLayer = L.geoJSON(data, {
-        //         style: {
-        //           color: "#3388ff",
-        //           weight: 2
-        //         },
-        //         onEachFeature: function(feature, layer) {
-        //           // Example: bind a popup
-        //           layer.bindPopup(feature.properties ? feature.properties.name : "No name");
-        //         }
-        //       }).addTo(map);
+        
+          fetch('/universities')
+            .then(response => response.json())
+            .then(geojson => {
+                
+                geojsonLayer = L.geoJSON(geojson, {
+                    style: {
+                        color: 'blue',
+                        weight: 2,
+                        opacity: 0.6,
+                        fillOpacity: 0.4
+                    },
+                    onEachFeature: (feature, layer) => {
+                        layer.bindPopup(`<b>${feature.properties.name}</b>`);
+                    }
+                }).addTo(map);
 
-        //       // Fit map bounds to the GeoJSON layer
-        //       map.fitBounds(geojsonLayer.getBounds());
-        //     })
-        //     .catch(error => console.error("Error loading GeoJSON:", error));
+                // Fit map bounds
+                map.fitBounds(geojsonLayer.getBounds());
+                
+            })
+            .catch(error => console.error("Error loading GeoJSON:", error));
 
         // Get file input element
         const fileInput = document.getElementById('fileInput');

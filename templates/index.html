@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Map Viewer</title>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <style>
+        #map {
+            height: 600px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>My Shapefile Map</h1>
+    <input type="file" id="fileInput" accept=".geojson">
+    <div id="map"></div>
+
+    <script>
+        // Initialize the map
+        const map = L.map('map').setView([37.8, -96], 10); // Center and zoom to USA roughly
+
+        // Add a base tile layer
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 40,
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        // Fetch the GeoJSON data from Flask endpoint
+        //   fetch('/geojson')
+        //     .then(response => response.json())
+        //     .then(data => {
+        //       // Once we have GeoJSON, add it to the map
+        //       const geojsonLayer = L.geoJSON(data, {
+        //         style: {
+        //           color: "#3388ff",
+        //           weight: 2
+        //         },
+        //         onEachFeature: function(feature, layer) {
+        //           // Example: bind a popup
+        //           layer.bindPopup(feature.properties ? feature.properties.name : "No name");
+        //         }
+        //       }).addTo(map);
+
+        //       // Fit map bounds to the GeoJSON layer
+        //       map.fitBounds(geojsonLayer.getBounds());
+        //     })
+        //     .catch(error => console.error("Error loading GeoJSON:", error));
+
+        // Get file input element
+        const fileInput = document.getElementById('fileInput');
+
+        // Add event listener for file selection
+        fileInput.addEventListener('change', function (e) {
+            const file = e.target.files[0];
+
+            // Check if a file is selected
+            if (file) {
+                const reader = new FileReader();
+
+                reader.onload = function (event) {
+                    try {
+                        // Parse the GeoJSON file
+                        const geojsonData = JSON.parse(event.target.result);
+
+                        // Clear any existing layers
+                        map.eachLayer((layer) => {
+                            if (layer instanceof L.GeoJSON) {
+                                map.removeLayer(layer);
+                            }
+                        });
+
+                        // Add the GeoJSON layer to the map
+                        const geojsonLayer = L.geoJSON(geojsonData, {
+                            onEachFeature: function (feature, layer) {
+                                // Add popup with feature properties if available
+                                if (feature.properties) {
+                                    layer.bindPopup(JSON.stringify(feature.properties, null, 2));
+                                }
+                            }
+                        }).addTo(map);
+
+                        // Fit the map view to the loaded GeoJSON bounds
+                        map.fitBounds(geojsonLayer.getBounds());
+                    } catch (error) {
+                        alert('Error parsing GeoJSON: ' + error.message);
+                    }
+                };
+
+                // Read the file as text
+                reader.readAsText(file);
+            }
+        });
+    </script>
+</body>
+
+</html>

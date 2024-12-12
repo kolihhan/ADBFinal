@@ -1,0 +1,14 @@
+/* AppBarComponent.css */
+.appbar-logo {
+    margin-right: 16px;
+    display: block;
+    width: 40px; /* Adjust the size based on your needs */
+    height: 40px; /* Adjust the size based on your needs */
+    border-radius: 50%; /* Makes the image circular */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3); /* Round shadow */
+}
+
+
+.MuiAppBar-root {
+    background-color: #f3f3f3 !important; /* Use !important to override Material-UI styles */
+}

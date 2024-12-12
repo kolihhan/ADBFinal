@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, GeoJSON, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css'; // Import Leaflet CSS
 import L from 'leaflet'; // Import the Leaflet namespace
@@ -7,21 +7,23 @@ import AppBarComponent from '../components/AppBarComponent.js'; // Adjust the pa
 export const SecondPage = () => {
   const [geojsonData, setGeojsonData] = useState(null);
 
-  const handleFileUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        try {
-          const data = JSON.parse(event.target.result);
-          setGeojsonData(data); // Set the GeoJSON data to state
-        } catch (error) {
-          alert('Invalid GeoJSON file');
+  // Fetch GeoJSON from the Flask API when the component is mounted
+  useEffect(() => {
+    const fetchGeoJSON = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/universities');
+        if (!response.ok) {
+          throw new Error('Failed to fetch GeoJSON');
         }
-      };
-      reader.readAsText(file);
-    }
-  };
+        const data = await response.json();
+        setGeojsonData(data); // Set the GeoJSON data to state
+      } catch (error) {
+        console.error('Error fetching GeoJSON:', error);
+      }
+    };
+
+    fetchGeoJSON(); // Call the function to fetch data
+  }, []); // Empty dependency array means this runs only once when the component mounts
 
   // Component to zoom the map to GeoJSON bounds
   const ZoomToBounds = ({ geojson }) => {
@@ -37,14 +39,6 @@ export const SecondPage = () => {
     <div className="App">
       {/* Include the AppBar component */}
       <AppBarComponent />
-
-      {/* File input for uploading GeoJSON */}
-      <input
-        type="file"
-        accept=".geojson"
-        onChange={handleFileUpload}
-        style={{ margin: '20px' }}
-      />
 
       {/* MapContainer to render the Leaflet map */}
       <MapContainer

@@ -8,7 +8,7 @@ POSTGRES = {
     'port': 5432,
     'database': 'finaladb',
     'user': 'postgres',
-    'password': 'testXD12345' #Make Sure change to ur user/password
+    'password': 'billpostgre' #Make Sure change to ur user/password
 }
 
 # Neo4J DB

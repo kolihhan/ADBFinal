@@ -38,14 +38,26 @@ neo4j_driver = GraphDatabase.driver(
 
 
 def execute_pg_query(query, params=None):
-    conn =  get_pg_connection()
-    cursor = conn.cursor()
-    cursor.execute(query, params if params else ())
-    results = cursor.fetchall()
-    cursor.close()
-    conn.close()
+    try:
+        conn = get_pg_connection()
+        cursor = conn.cursor()
+        cursor.execute(query, params if params else ())
+        results = cursor.fetchall()
+    except Exception as e:
+        print(f"PostgreSQL Query Error: {e}")
+        return []
+    finally:
+        cursor.close()
+        conn.close()
     return results
 
-
+def execute_neo4j_query(query, params=None):
+    try:
+        with neo4j_driver.session() as session:
+            result = session.run(query, params if params else ())
+            return result
+    except Exception as e:
+        print(f"Neo4j Query Error: {e}")
+        return []
 
 

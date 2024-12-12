@@ -8,9 +8,39 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
     <style>
         #map {
             height: 600px;
+        }
+
+        .leaflet-routing-container {
+            background-color: #ffffff;
+            /* White background for a clean look */
+            border: 1px solid #ccc;
+            /* Add a subtle border */
+            border-radius: 5px;
+            /* Rounded corners */
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+            /* Soft shadow for depth */
+            padding: 10px;
+            /* Add some padding */
+            font-family: Arial, sans-serif;
+            /* Use a clean font */
+            font-size: 14px;
+            /* Adjust font size for readability */
+        }
+
+        .leaflet-routing-container .leaflet-routing-alt {
+            border-top: 1px solid #ddd;
+            /* Add a divider between alternatives */
+            margin-top: 5px;
+            padding-top: 5px;
+        }
+
+        .leaflet-routing-container-hidden {
+            display: none !important;
+            /* Hide the container when not in use */
         }
     </style>
 </head>
@@ -26,16 +56,16 @@
 
         // Add a base tile layer
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 40,
+            maxZoom: 19,
             attribution: '© OpenStreetMap contributors'
         }).addTo(map);
 
-        
-          fetch('/universities')
+        // Fetch GeoJSON for universities (Optional: Uncomment if needed)
+        /*
+        fetch('/universities')
             .then(response => response.json())
             .then(geojson => {
-                
-                geojsonLayer = L.geoJSON(geojson, {
+                const geojsonLayer = L.geoJSON(geojson, {
                     style: {
                         color: 'blue',
                         weight: 2,
@@ -43,61 +73,61 @@
                         fillOpacity: 0.4
                     },
                     onEachFeature: (feature, layer) => {
-                        layer.bindPopup(`<b>${feature.properties.name}</b>`);
+                        layer.bindPopup(`<b>${feature.properties.name ?? ""}</b>`);
+                    }
+                }).addTo(map);
+    
+                // Fit map bounds to the loaded GeoJSON layer
+                map.fitBounds(geojsonLayer.getBounds());
+            })
+            .catch(error => console.error("Error loading GeoJSON:", error));
+        */
+
+        // Add Routing Function
+        fetch('/random_student_uni')
+            .then(response => response.json())
+            .then(geojson => {
+                const features = geojson.features;
+
+                // Extract coordinates for student and university
+                const studentCoords = features[0].geometry.coordinates; // [lng, lat]
+                const uniCoords = features[1].geometry.coordinates[0][0][0]; // [lng, lat]
+
+                const geojsonLayer = L.geoJSON(geojson, {
+                    style: {
+                        color: 'blue',
+                        weight: 2,
+                        opacity: 0.6,
+                        fillOpacity: 0.4
+                    },
+                    onEachFeature: (feature, layer) => {
+                        layer.bindPopup(`<b>${feature.properties.name ?? ""}</b>`);
                     }
                 }).addTo(map);
 
-                // Fit map bounds
+                // Fit map bounds to the loaded GeoJSON layer
                 map.fitBounds(geojsonLayer.getBounds());
-                
+
+
+
+                // Add routing between student and university
+                L.Routing.control({
+                    waypoints: [
+                        L.latLng(studentCoords[1], studentCoords[0]), // Leaflet uses [lat, lng]
+                        L.latLng(uniCoords[1], uniCoords[0])
+                    ],
+                    routeWhileDragging: false,
+                    showAlternatives: false,
+                    altLineOptions: { styles: [{ color: 'blue', opacity: 0.7, weight: 3 }] },
+                    router: new L.Routing.osrmv1({
+                        serviceUrl: 'https://router.project-osrm.org/route/v1'
+                    }),
+                    createMarker: () => null // Suppress default waypoint markers
+                }).addTo(map);
             })
-            .catch(error => console.error("Error loading GeoJSON:", error));
-
-        // Get file input element
-        const fileInput = document.getElementById('fileInput');
-
-        // Add event listener for file selection
-        fileInput.addEventListener('change', function (e) {
-            const file = e.target.files[0];
-
-            // Check if a file is selected
-            if (file) {
-                const reader = new FileReader();
-
-                reader.onload = function (event) {
-                    try {
-                        // Parse the GeoJSON file
-                        const geojsonData = JSON.parse(event.target.result);
-
-                        // Clear any existing layers
-                        map.eachLayer((layer) => {
-                            if (layer instanceof L.GeoJSON) {
-                                map.removeLayer(layer);
-                            }
-                        });
-
-                        // Add the GeoJSON layer to the map
-                        const geojsonLayer = L.geoJSON(geojsonData, {
-                            onEachFeature: function (feature, layer) {
-                                // Add popup with feature properties if available
-                                if (feature.properties) {
-                                    layer.bindPopup(JSON.stringify(feature.properties, null, 2));
-                                }
-                            }
-                        }).addTo(map);
-
-                        // Fit the map view to the loaded GeoJSON bounds
-                        map.fitBounds(geojsonLayer.getBounds());
-                    } catch (error) {
-                        alert('Error parsing GeoJSON: ' + error.message);
-                    }
-                };
-
-                // Read the file as text
-                reader.readAsText(file);
-            }
-        });
+            .catch(error => console.error('Error fetching data:', error));
     </script>
+
 </body>
 
 </html>

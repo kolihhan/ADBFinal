@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 import AppBarComponent from '../components/AppBarComponent.js'; 
-import React, { useState } from 'react';
-import AppBarComponent from '../components/AppBarComponent.js'; 
 
 export const ThirdPage = () => {
   const [studentId, setStudentId] = useState(''); 
@@ -23,26 +21,6 @@ export const ThirdPage = () => {
   return (
     <div className="App">
       <AppBarComponent />
-
-      <div style={{ marginTop: '20px', textAlign: 'center' }}>
-        <form onSubmit={handleSubmit}>
-          <label htmlFor="student-id">
-            Student ID:
-            <input
-              id="student-id"
-              type="text"
-              value={studentId}
-              onChange={handleInputChange}
-              placeholder="Enter Student ID"
-              required
-              style={{ marginLeft: '10px', padding: '5px' }}
-            />
-          </label>
-          <button type="submit" style={{ marginLeft: '10px', padding: '5px 10px' }}>
-            Query
-          </button>
-        </form>
-      </div>
       <div style={{ marginTop: '20px', textAlign: 'center' }}>
         <form onSubmit={handleSubmit}>
           <label htmlFor="student-id">
@@ -65,6 +43,6 @@ export const ThirdPage = () => {
     </div>
   );
 };
-};
+
 
 export default ThirdPage;

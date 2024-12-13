@@ -9,6 +9,11 @@
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
+    <script type="module">
+        import Openrouteservice from 'https://cdn.jsdelivr.net/npm/openrouteservice-js@0.4.1/+esm'
+    </script>
+
+    <script src="{{ url_for('static', filename='L.Routing.OpenRouteServiceV2.js') }}"></script>
     <style>
         #map {
             height: 600px;
@@ -50,7 +55,42 @@
     <input type="file" id="fileInput" accept=".geojson">
     <div id="map"></div>
 
+    <h1>Query Student API</h1>
+    <form id="queryStudentForm">
+        <label for="student-id">Student ID:</label>
+        <input type="text" id="student-id" name="student-id" required>
+        <button type="submit">Submit</button>
+    </form>
+
+    <h2>Response:</h2>
+    <pre id="responseOutput"></pre>
+
     <script>
+
+        document.getElementById("queryStudentForm").addEventListener("submit", async function (event) {
+            event.preventDefault();
+
+            const studentId = document.getElementById("student-id").value;
+            const responseOutput = document.getElementById("responseOutput");
+
+            try {
+                const response = await fetch('/post_query_student', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        'student-id': studentId
+                    }),
+                });
+
+                const data = await response.json();
+                responseOutput.textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                responseOutput.textContent = `Error: ${error}`;
+            }
+        });
+
         // Initialize the map
         const map = L.map('map').setView([37.8, -96], 10); // Center and zoom to USA roughly
 
@@ -119,9 +159,13 @@
                     routeWhileDragging: false,
                     showAlternatives: false,
                     altLineOptions: { styles: [{ color: 'blue', opacity: 0.7, weight: 3 }] },
-                    router: new L.Routing.osrmv1({
-                        serviceUrl: 'https://router.project-osrm.org/route/v1'
-                    }),
+                    router: new L.Routing.openrouteserviceV2(
+                        '5b3ce3597851110001cf624820b56b97186d4419b66f4c9f3c597718',
+                        {
+                            profile: "driving-car",
+                            geometry_simplify: true // Needs to do _decodePolyline and smaller request
+                        }
+                    ),
                     createMarker: () => null // Suppress default waypoint markers
                 }).addTo(map);
             })

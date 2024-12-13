@@ -1,5 +1,6 @@
--- Spatial Database Table Creation Script for PostGIS
+### Spatial Database Table Creation Script for PostGIS
 
+```
 -- Create sequence for students
 CREATE SEQUENCE students_seq START 1;
 
@@ -39,3 +40,9 @@ CREATE TABLE regions (
     chinese_name VARCHAR(255),
     geom GEOMETRY(MultiPolygon, 4326)
 );
+```
+
+## `Things to aware`
+
+### Check If Header Option is checked to make sure the import process works!
+- ![alt text](image.png)

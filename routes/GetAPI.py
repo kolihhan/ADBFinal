@@ -12,7 +12,7 @@ Only GET API here
 @bp.route("/universities", methods=["GET"])
 def get_universities():
     """
-    Get All Universities as a GeoJSON FeatureCollection
+    Get All Universities and Count Student as a GeoJSON FeatureCollection
     """
     query = spatial_queries.get_all_uni_geom()
     results = execute_pg_query(query)
@@ -88,7 +88,7 @@ def get_random_student_nearest_uni():
     """
     Get nearest distance between a random student and university as a GeoJSON FeatureCollection
     """
-    query = spatial_queries.find_nearest_taica_uni_from_student()
+    query = spatial_queries.find_nearest_taica_uni_from_random_student()
     results = execute_pg_query(query)
     
     features = []
@@ -121,7 +121,7 @@ def get_student_with_cert():
     """
     Get student details that has certification based on university as a GeoJSON FeatureCollection
     """
-    neo_query = graph_queries.count_student_has_cert()
+    neo_query = graph_queries.count_students_with_certificates()
     neo_result = [record["student_id"] for record in execute_neo4j_query(neo_query)]
     
     query = spatial_queries.count_student_has_cert()
@@ -144,6 +144,19 @@ def get_student_with_cert():
     
     return jsonify(geojson)
 
+
+@bp.route("/get_execute_ai_accessibility", methods=["GET"])
+def execute_ai_accessibility():
+
+    query = spatial_queries.get_universities_by_region()
+    results = execute_pg_query(query)
+    
+    university_ids = results.get('university_id', [])
+    
+    neo_query = graph_queries.assess_accessibility_of_ai_programs(university_ids)
+    neo_result = [record["ai_university_count"]  for record in execute_neo4j_query(neo_query)]
+    
+    return jsonify(neo_result)
 
 
 @bp.route('/')

@@ -1,8 +1,15 @@
 def get_all_uni_geom():
     query = """
-    SELECT name, ST_AsGeoJSON(geom) 
-    FROM public."universities" 
-    ORDER BY gid ASC;
+    SELECT 
+        u.name,
+        COUNT(s.student_id) AS student_count,
+        ST_AsGeoJSON(u.geom) 
+    FROM 
+        students s
+    JOIN 
+        universities u ON s.university_id = u.university_id
+    GROUP BY 
+        u.name, u.geom;
     """
     return query
 
@@ -43,7 +50,35 @@ def count_low_student_region():
     """
     return query
 
-def find_nearest_taica_uni_from_student():
+def find_nearest_taica_uni_for_student(student_id):
+    query = f"""
+    WITH specific_student AS (
+        SELECT 
+            student_id, 
+            ST_SetSRID(geom, 4326) AS geom
+        FROM 
+            students
+        WHERE
+            student_id = {student_id}
+    )
+    
+    SELECT 
+        u.name,
+        s.student_id,
+        ST_AsGeoJSON(s.geom) AS student_geom,
+        ST_AsGeoJSON(u.geom) AS university_geom,
+        ST_Distance(s.geom, ST_SetSRID(u.geom, 4326)) AS distance
+    FROM 
+        universities u,
+        specific_student s
+    ORDER BY 
+        ST_Distance(s.geom, ST_SetSRID(u.geom, 4326))
+    LIMIT 1;
+    """
+    return query
+
+
+def find_nearest_taica_uni_from_random_student():
     query = """
     WITH random_student AS (
         SELECT 
@@ -88,3 +123,24 @@ def count_student_has_cert():
                 u.university_name,u.geom;
         """
     return query
+
+
+def get_universities_by_region():
+    query = """
+    SELECT r.chinese_name, u.id AS university_id, ST_AsGeoJSON(r.geom)
+    FROM regions r
+    JOIN universities u ON ST_Within(u.geom, r.geom)
+    """
+    return query
+
+
+def get_regions_with_few_universities():
+    sql_query = f"""
+    SELECT r.chinese_name, COUNT(u.id) AS university_count
+    FROM regions r
+    LEFT JOIN universities u ON ST_Within(u.geom, r.geom)
+    GROUP BY r.region
+    HAVING COUNT(u.id) < 5
+    """
+    return sql_query
+

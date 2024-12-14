@@ -15,12 +15,23 @@ DETACH DELETE n;
 // ========================================
 
 // Ensure uniqueness for key node identifiers
-CREATE CONSTRAINT university_id_unique FOR (u:University) REQUIRE u.id IS UNIQUE;
-CREATE CONSTRAINT program_id_unique FOR (p:Program) REQUIRE p.id IS UNIQUE;
-CREATE CONSTRAINT committee_id_unique FOR (c:Committee) REQUIRE c.id IS UNIQUE;
-CREATE CONSTRAINT student_id_unique FOR (s:Student) REQUIRE s.id IS UNIQUE;
-CREATE CONSTRAINT course_id_unique FOR (course:Course) REQUIRE course.id IS UNIQUE;
-CREATE CONSTRAINT semester_id_unique FOR (sem:Semester) REQUIRE sem.id IS UNIQUE;
+CREATE CONSTRAINT IF NOT EXISTS FOR (u:University)
+REQUIRE u.id IS UNIQUE;
+
+CREATE CONSTRAINT IF NOT EXISTS FOR (p:Program)
+REQUIRE p.id IS UNIQUE;
+
+CREATE CONSTRAINT IF NOT EXISTS FOR (c:Committee)
+REQUIRE c.id IS UNIQUE;
+
+CREATE CONSTRAINT IF NOT EXISTS FOR (s:Student)
+REQUIRE s.id IS UNIQUE;
+
+CREATE CONSTRAINT IF NOT EXISTS FOR (course:Course)
+REQUIRE course.id IS UNIQUE;
+
+CREATE CONSTRAINT IF NOT EXISTS FOR (sem:Semester)
+REQUIRE sem.id IS UNIQUE;
 
 // ========================================
 // Step 3: Load University Data

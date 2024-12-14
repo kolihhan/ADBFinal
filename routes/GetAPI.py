@@ -12,7 +12,7 @@ Only GET API here
 @bp.route("/universities", methods=["GET"])
 def get_universities():
     """
-    Get All Universities and Count Student as a GeoJSON FeatureCollection
+    Get All Universities and Count Student(With and without cert) as a GeoJSON FeatureCollection
     """
     query = spatial_queries.get_all_uni_geom()
     results = execute_pg_query(query)
@@ -121,22 +121,31 @@ def get_student_with_cert():
     """
     Get student details that has certification based on university as a GeoJSON FeatureCollection
     """
-    neo_query = graph_queries.count_students_with_certificates()
+    neo_query = graph_queries.count_students_with_TAICA_Certifications()
     neo_result = [record["student_id"] for record in execute_neo4j_query(neo_query)]
     
-    query = spatial_queries.count_student_has_cert()
+    
+    if not neo_result:
+        return jsonify({
+            "type": "FeatureCollection",
+            "features": [],
+            "message": "No certified students found."
+        }), 200
+    
+    placeholders = ','.join(['%s'] * len(neo_result))
+    query = spatial_queries.count_student_has_cert().format(placeholders=placeholders)        
     results = execute_pg_query(query, neo_result)
     
     features = []
     for row in results:
         name, total_student, geom = row
 
-    features.append({
-        "type": "Feature",
-        "properties": {"name": name, "count_student": total_student},
-        "geometry": json.loads(geom)
-    })
-    
+        features.append({
+            "type": "Feature",
+            "properties": {"name": name, "count_student": total_student},
+            "geometry": json.loads(geom)
+        })
+        
     geojson = {
         "type": "FeatureCollection",
         "features": features
@@ -145,20 +154,23 @@ def get_student_with_cert():
     return jsonify(geojson)
 
 
-@bp.route("/get_execute_ai_accessibility", methods=["GET"])
-def execute_ai_accessibility():
-
-    query = spatial_queries.get_universities_by_region()
-    results = execute_pg_query(query)
-    
-    university_ids = results.get('university_id', [])
-    
-    neo_query = graph_queries.assess_accessibility_of_ai_programs(university_ids)
-    neo_result = [record["ai_university_count"]  for record in execute_neo4j_query(neo_query)]
-    
-    return jsonify(neo_result)
-
-
 @bp.route('/')
 def index():
     return render_template('index.html')
+
+
+class UnusedQueries:
+    
+    @bp.route("/get_execute_ai_accessibility", methods=["GET"])
+    def execute_ai_accessibility():
+
+        query = spatial_queries.get_universities_by_region()
+        results = execute_pg_query(query)
+
+        university_ids = results.get('university_id', [])
+
+        neo_query = graph_queries.assess_accessibility_of_ai_programs(university_ids)
+        neo_result = [record["ai_university_count"]  for record in execute_neo4j_query(neo_query)]
+
+        return jsonify(neo_result)
+

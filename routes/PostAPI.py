@@ -21,7 +21,7 @@ def post_query_student():
             return jsonify({'error': 'Student ID is required'}), 400
 
         student_info = graph_queries.get_student_details()
-        result = execute_neo4j_query(student_info, {"student_id": student_id})
+        result = execute_neo4j_query(student_info, {"studentId": student_id})
         
         
         if not student_info:

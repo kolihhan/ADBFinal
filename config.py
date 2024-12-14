@@ -40,7 +40,7 @@ neo4j_driver = GraphDatabase.driver(
 def execute_pg_query(query, params=None):
     conn =  get_pg_connection()
     cursor = conn.cursor()
-    cursor.execute(query, params if params else ())
+    cursor.execute(query, params or ())
     results = cursor.fetchall()
     cursor.close()
     conn.close()

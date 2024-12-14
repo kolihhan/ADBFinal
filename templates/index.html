@@ -59,6 +59,8 @@
     <form id="queryStudentForm">
         <label for="student-id">Student ID:</label>
         <input type="text" id="student-id" name="student-id" required>
+        <label for="university-id">University ID:</label>
+        <input type="text" id="university-id" name="university-id" required>
         <button type="submit">Submit</button>
     </form>
 
@@ -71,6 +73,7 @@
             event.preventDefault();
 
             const studentId = document.getElementById("student-id").value;
+            const universityId = document.getElementById("university-id").value;
             const responseOutput = document.getElementById("responseOutput");
 
             try {
@@ -80,7 +83,8 @@
                         'Content-Type': 'application/x-www-form-urlencoded',
                     },
                     body: new URLSearchParams({
-                        'student-id': studentId
+                        'student-id': studentId,
+                        'university-id' : universityId
                     }),
                 });
 

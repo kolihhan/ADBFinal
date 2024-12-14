@@ -109,18 +109,19 @@ def find_nearest_taica_uni_from_random_student():
 
 def count_student_has_cert():
     query = """
-            SELECT 
-                u.university_name,
-                COUNT(s.student_id) AS taica_certified_students,
-                ST_AsGeoJSON(u.geom)
-            FROM 
-                students s
-            JOIN 
-                universities u ON s.university_id = u.university_id
-            WHERE 
-                s.student_id = ANY(%s)
-            GROUP BY 
-                u.university_name,u.geom;
+    SELECT 
+        u.name,
+        COUNT(DISTINCT s.student_id) AS taica_certified_students,
+        ST_AsGeoJSON(u.geom)
+    FROM 
+        students s
+    JOIN 
+        universities u ON s.university_id = u.university_id
+    WHERE 
+        (s.student_id, s.university_id) IN ({placeholders})
+    GROUP BY 
+        u.name, u.geom;
+    
         """
     return query
 

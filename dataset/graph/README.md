@@ -15,12 +15,20 @@ DETACH DELETE n;
 // ========================================
 
 // Ensure uniqueness for key node identifiers
-CREATE CONSTRAINT university_id_unique FOR (u:University) REQUIRE u.id IS UNIQUE;
-CREATE CONSTRAINT program_id_unique FOR (p:Program) REQUIRE p.id IS UNIQUE;
-CREATE CONSTRAINT committee_id_unique FOR (c:Committee) REQUIRE c.id IS UNIQUE;
-CREATE CONSTRAINT student_id_unique FOR (s:Student) REQUIRE s.id IS UNIQUE;
-CREATE CONSTRAINT course_id_unique FOR (course:Course) REQUIRE course.id IS UNIQUE;
-CREATE CONSTRAINT semester_id_unique FOR (sem:Semester) REQUIRE sem.id IS UNIQUE;
+CREATE CONSTRAINT IF NOT EXISTS FOR (u:University)
+REQUIRE u.id IS UNIQUE;
+
+CREATE CONSTRAINT IF NOT EXISTS FOR (p:Program)
+REQUIRE p.id IS UNIQUE;
+
+CREATE CONSTRAINT IF NOT EXISTS FOR (c:Committee)
+REQUIRE c.id IS UNIQUE;
+
+CREATE CONSTRAINT IF NOT EXISTS FOR (course:Course)
+REQUIRE course.id IS UNIQUE;
+
+CREATE CONSTRAINT IF NOT EXISTS FOR (sem:Semester)
+REQUIRE sem.id IS UNIQUE;
 
 // ========================================
 // Step 3: Load University Data
@@ -120,6 +128,22 @@ MERGE (student)-[:ENROLLED_IN {
     status: row.Status,
     grade: row.Grade
 }]->(course);
+
+// ========================================
+// Step 13: Sample prerequisite_for data
+// ========================================
+
+MATCH (c1:Course {id: "7"}), (c2:Course {id: "2"}), (c3:Course {id: "3"})
+MERGE (c1)-[:PREREQUISITE_FOR]->(c2)
+MERGE (c1)-[:PREREQUISITE_FOR]->(c3)
+RETURN c1, c2, c3;
+
+// Create prerequisites for Probability -> Machine Learning
+MATCH (c4:Course {id: "6"}), (c5:Course {id: "1"}), (c6:Course {id: "16"})
+MERGE (c4)-[:PREREQUISITE_FOR]->(c5)
+RETURN c4, c5;
+
+
 
 ```
 

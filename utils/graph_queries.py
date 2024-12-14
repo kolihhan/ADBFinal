@@ -1,6 +1,6 @@
 def get_student_details():
     query = """
-    MATCH (student:Student {id: $studentId})-[:STUDIES_AT]->(university:University {id:uni_id})
+    MATCH (student:Student {id: $studentId})-[:STUDIES_AT]->(university:University {id: $uniID })
     OPTIONAL MATCH (student)-[:CERTIFIED_IN]->(taicaProgram:Program)
     OPTIONAL MATCH (requiredCourse:Course)-[:PART_OF]->(taicaProgram)
     OPTIONAL MATCH (student)-[enr:ENROLLED_IN]->(requiredCourse)

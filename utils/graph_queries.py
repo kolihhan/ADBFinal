@@ -1,6 +1,6 @@
 def get_student_details():
     query = """
-    MATCH (student:Student {id: $studentId})-[:STUDIES_AT]->(university:University)
+    MATCH (student:Student {id: $studentId})-[:STUDIES_AT]->(university:University {id:uni_id})
     OPTIONAL MATCH (student)-[:CERTIFIED_IN]->(taicaProgram:Program)
     OPTIONAL MATCH (requiredCourse:Course)-[:PART_OF]->(taicaProgram)
     OPTIONAL MATCH (student)-[enr:ENROLLED_IN]->(requiredCourse)
@@ -55,10 +55,35 @@ def count_students_with_TAICA_Certifications():
     WITH 
         s,
         SUM(CASE WHEN enr.status = 'P' THEN requiredCourse.credits ELSE 0 END) AS total_credits
-    WHERE total_credits > 6
-    RETURN DISTINCT s.id AS student_id
+    WHERE total_credits = 15
+    RETURN DISTINCT s.id AS student_id, s.university_id as university_id
     """
     return query
+  
+
+def program_courses_with_their_prerequisites():
+  query = """
+
+  MATCH (prerequisites:Course)-[:PREREQUISITE_FOR]->(Course:Course)
+  OPTIONAL MATCH (Course)-[:PART_OF]->(program:Program)
+  RETURN Course, prerequisites, program
+
+  """
+  
+  return query
+
+def specific_courses_prerequisities():
+
+  query = """
+
+  // Find all courses and their prerequisites within a specific program
+  MATCH (p:Program {id: $id})<-[:PART_OF]-(c:Course)
+  OPTIONAL MATCH (c)-[:PREREQUISITE_FOR]->(prereq:Course)
+  RETURN c.name AS Course, prereq.name AS Prerequisite
+  ORDER BY Course;
+  """
+  return query
+
 
 class unusedQueries:
 

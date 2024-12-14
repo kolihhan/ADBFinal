@@ -15,13 +15,14 @@ def post_query_student():
     try:
         # Get the data from the form
         student_id = request.form.get('student-id')
-
+        uni_id = request.form.get('university-id')
+        
         # Validate input
         if not student_id:
             return jsonify({'error': 'Student ID is required'}), 400
 
         student_info = graph_queries.get_student_details()
-        result = execute_neo4j_query(student_info, {"studentId": student_id})
+        result = execute_neo4j_query(student_info, {"studentId": student_id, "uniID": uni_id})
         
         
         if not student_info:

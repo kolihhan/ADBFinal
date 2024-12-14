@@ -1,6 +1,6 @@
 from flask import Blueprint, json, render_template, request, jsonify
 from utils import spatial_queries, graph_queries
-from config import execute_pg_query, execute_neo4j_query
+from config import drop_all_constraints,execute_pg_query, execute_neo4j_query
 
 bp = Blueprint('GetAPI', __name__)
 
@@ -119,23 +119,29 @@ def get_random_student_nearest_uni():
 @bp.route("/get_student_cert", methods=["GET"])
 def get_student_with_cert():
     """
-    Get student details that has certification based on university as a GeoJSON FeatureCollection
+    Get student details that have certification based on university as a GeoJSON FeatureCollection.
     """
+    # Step 1: Get student IDs and university IDs from Neo4j
     neo_query = graph_queries.count_students_with_TAICA_Certifications()
-    neo_result = [record["student_id"] for record in execute_neo4j_query(neo_query)]
+    neo_result = execute_neo4j_query(neo_query)
     
-    
-    if not neo_result:
+    student_uni_pairs = [(record["student_id"], record["university_id"]) for record in neo_result]
+
+    if not student_uni_pairs:
         return jsonify({
             "type": "FeatureCollection",
             "features": [],
             "message": "No certified students found."
         }), 200
+
+    placeholders = ','.join(['(%s, %s)'] * len(student_uni_pairs))
+    query = spatial_queries.count_student_has_cert().format(
+        placeholders=placeholders
+    )
     
-    placeholders = ','.join(['%s'] * len(neo_result))
-    query = spatial_queries.count_student_has_cert().format(placeholders=placeholders)        
-    results = execute_pg_query(query, neo_result)
-    
+    query_params = [value for pair in student_uni_pairs for value in pair]
+    results = execute_pg_query(query, query_params)
+
     features = []
     for row in results:
         name, total_student, geom = row
@@ -145,19 +151,38 @@ def get_student_with_cert():
             "properties": {"name": name, "count_student": total_student},
             "geometry": json.loads(geom)
         })
-        
+
     geojson = {
         "type": "FeatureCollection",
         "features": features
     }
-    
+
     return jsonify(geojson)
+
+
+@bp.route("/get_program_courses_with_their_prerequisites", methods=["GET"])
+def get_program_courses_with_their_prerequisites():
+    """
+    Get program_courses with their prerequisites
+    """
+    neo_query = graph_queries.program_courses_with_their_prerequisites()
+    neo_result = execute_neo4j_query(neo_query)
+    
+    return jsonify(neo_result)
+
 
 
 @bp.route('/')
 def index():
     return render_template('index.html')
 
+
+@bp.route("/clear_all", methods=["GET"])
+def testing():
+    
+    drop_all_constraints()
+    
+    return "Done!"
 
 class UnusedQueries:
     

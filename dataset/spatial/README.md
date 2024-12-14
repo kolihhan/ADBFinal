@@ -6,7 +6,7 @@ CREATE SEQUENCE students_seq START 1;
 
 -- Create students table
 CREATE TABLE students (
-    student_id BIGINT PRIMARY KEY DEFAULT nextval('students_seq'),
+    student_id BIGINT,
     university_name VARCHAR(255),
     university_id INT,
     latitude DOUBLE PRECISION,

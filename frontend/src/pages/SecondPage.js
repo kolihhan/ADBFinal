@@ -5,6 +5,7 @@ import L from 'leaflet';
 import 'leaflet-routing-machine';
 import AppBarComponent from '../components/AppBarComponent.js';
 import AppBarComponenttwo from '../components/AppBarComponenttwo.js';
+import Footer from '../components/FooterComponent.js';
 import { Drawer, Box, Typography, IconButton, Toolbar, AppBar } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
@@ -212,7 +213,8 @@ export const SecondPage = () => {
       <AppBarComponent />
 
       {/* University Selector */}
-      {(areaGeoJSONReady || univGeoJSONReady) && geojsonData  && (
+      
+      {(!areaGeoJSONReady) && geojsonData  && (
         <div style={{ margin: '10px', textAlign: 'center' }}>
           <select
             value={selectedId !== null ? selectedId : ''} // Set dropdown value to selected university index
@@ -258,24 +260,14 @@ export const SecondPage = () => {
             if (feature.properties) {
               const { name } = feature.properties;
               let popupContent = null;
-              if (univGeoJSONReady) {
+              
                 popupContent = `
                   <h3>${name || 'N/A'}</h3>
                   <button id="showDetailBtn-${name}" class="leaflet-popup-button">Show Detail</button>
                 `;
-              }
-              if (areaGeoJSONReady) {
-                popupContent = `
-                  <h3>${name || 'N/A'}</h3>
-                  <button id="showDetailBtn-${name}" class="leaflet-popup-button">Show Detail</button>
-                `;
-              }
-              if (lowUnivJsonReady) {
-                popupContent = `
-                  <h3>${name || 'N/A'}</h3>
-                  <button id="showDetailBtn-${name}" class="leaflet-popup-button">Show Detail</button>
-                `;
-              }
+              
+              
+              
               layer.bindPopup(popupContent);
               // Add event listener when the popup opens
               layer.on('popupopen', () => {
@@ -348,7 +340,7 @@ export const SecondPage = () => {
                 {featureDetails.name}
               </Typography>
               <Typography variant="body1" sx={{ color: '#666' }}>
-                <strong>Number of Students:</strong> {(univGeoJSONReady ? featureDetails.count : featureDetails.student_count) || 'N/A'}
+                <strong>Number of Students:</strong> {featureDetails.count || 'N/A'}
               </Typography>
               {/* Add more details or visuals here */}
             </div>
@@ -359,6 +351,7 @@ export const SecondPage = () => {
           )}
         </Box>
       </Drawer>}
+      <Footer/>
     </div>
   );
 };

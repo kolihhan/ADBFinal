@@ -13,7 +13,7 @@ function AppBarComponent() {
   const theme = useTheme(); 
 
   return (
-    <AppBar position="static" sx={{ backgroundColor: theme.palette.background.default }}>
+    <AppBar position="static" sx={{ backgroundColor: '#fff', boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.3)' }}>
       <Container>
         <Toolbar>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>

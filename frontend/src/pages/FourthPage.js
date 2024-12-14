@@ -1,5 +1,6 @@
 import React from 'react';
 import AppBarComponent from '../components/AppBarComponent.js'; // Adjust the path as needed
+import Footer from '../components/FooterComponent.js'
 import { Card, CardContent, CardMedia, Grid, Typography, Box, Link } from '@mui/material';
 import { styled } from '@mui/system';
 
@@ -112,6 +113,7 @@ export const FourthPage = () => {
           </Grid>
         </Grid>
       </TeamContainer>
+      <Footer/>
     </div>
   );
 };

@@ -35,7 +35,7 @@ const LandingImage = styled('img')(({ theme }) => ({
 
 export const FirstPage = () => {
   return (
-    <Box className="App" sx={{ margin: 0 }}> {/* Ensure there's no margin here */}
+    <Box className="App" > {/* Ensure there's no margin here */}
       {/* Include the AppBar component */}
       <AppBarComponent />
 
@@ -43,10 +43,10 @@ export const FirstPage = () => {
         {/* Left Section: Text Content */}
         <TextContent>
           <Typography variant="h2" component="h1" gutterBottom color="secondary">
-            Welcome to Our Platform
+          Welcome to TaicaMS!
           </Typography>
           <Typography variant="body1" paragraph>
-            Discover a world of possibilities with our cutting-edge technology. Join us in shaping the future.
+          Where knowledge and creativity abound! Explore, engage, and interact with our system to discover the culmination of six passionate individuals. Here, we've created efficient solutions to match TAICA's unique needs and characteristics, ensuring powerful querying options to all necessary stakeholders.
           </Typography>
         </TextContent>
 

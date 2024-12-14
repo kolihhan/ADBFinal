@@ -2,12 +2,22 @@ import React from 'react';
 import { Box, Typography, Grid, Link } from '@mui/material';
 import { styled } from '@mui/system';
 
+const AppContainer = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  minHeight: '100vh', // Ensure the footer is pushed to the bottom of the page
+}));
+
+const MainContent = styled(Box)(({ theme }) => ({
+  flexGrow: 1, // This ensures the main content takes up available space
+}));
+
 const FooterContainer = styled(Box)(({ theme }) => ({
-  backgroundColor: theme.palette.primary.main,
+  backgroundColor: 'white',
   color: theme.palette.common.white,
   padding: theme.spacing(4, 0),
   textAlign: 'center',
-  marginTop: 'auto', // Pushes footer to the bottom of the page
+  marginTop: 'auto', // Ensures the footer sticks to the bottom of the page
 }));
 
 const FooterContent = styled(Grid)(({ theme }) => ({
@@ -39,7 +49,7 @@ const Footer = () => {
             Address
           </Typography>
           <Typography variant="body2" sx={{ color: 'secondary.main' }}>
-          No. 101號, Section 2, Guangfu Rd, East District, Hsinchu City, 300
+            No. 101號, Section 2, Guangfu Rd, East District, Hsinchu City, 300
           </Typography>
         </Grid>
 
@@ -64,7 +74,7 @@ const Footer = () => {
       </FooterContent>
 
       <Typography variant="body2" color="inherit" sx={{ marginTop: 2, color: 'secondary.main' }}>
-         {new Date().getFullYear()} Copyright &copy; Lindsey and the Boys 2024. All wrongs reserved.
+        &copy; {new Date().getFullYear()} Lindsey and the Boys. All wrongs reserved.
       </Typography>
     </FooterContainer>
   );

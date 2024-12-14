@@ -26,7 +26,7 @@ function AppBarComponenttwo({ fetchUnivGeoJSON, fetchAreaStudentGeoJson, handleC
           padding: '10px 20px',
         }}
       >
-        <Typography variant="button">Query 1</Typography>
+        <Typography variant="button">University</Typography>
       </Button>
       <Button 
         onClick={() => { 
@@ -42,7 +42,7 @@ function AppBarComponenttwo({ fetchUnivGeoJSON, fetchAreaStudentGeoJson, handleC
           padding: '10px 20px',
         }}
       >
-        <Typography variant="button">Query 2</Typography>
+        <Typography variant="button">Area</Typography>
       </Button>
       <Button 
         onClick={() => { 
@@ -58,7 +58,7 @@ function AppBarComponenttwo({ fetchUnivGeoJSON, fetchAreaStudentGeoJson, handleC
           padding: '10px 20px',
         }}
       >
-        <Typography variant="button">Query 3</Typography>
+        <Typography variant="button">Low Taica</Typography>
       </Button>
       <Button 
         onClick={() => { 
@@ -74,7 +74,7 @@ function AppBarComponenttwo({ fetchUnivGeoJSON, fetchAreaStudentGeoJson, handleC
           padding: '10px 20px',
         }}
       >
-        <Typography variant="button">Query 4</Typography>
+        <Typography variant="button">What</Typography>
       </Button>
     </Box>
   );

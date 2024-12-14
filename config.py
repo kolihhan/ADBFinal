@@ -15,7 +15,7 @@ POSTGRES = {
 NEO4J = {
     'uri': 'bolt://localhost:7687',
     'user': 'neo4j',
-    'password': 'finaladb'
+    'password': 'billneo4j'
 }
 
 

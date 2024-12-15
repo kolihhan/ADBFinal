@@ -19,10 +19,10 @@ def get_universities():
     
     features = []
     for row in results:
-        name, geom = row
+        name,count, geom = row
         features.append({
             "type": "Feature",
-            "properties": {"name": name},
+            "properties": {"name": name,"count":count},
             "geometry": json.loads(geom) 
         })
     

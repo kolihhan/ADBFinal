@@ -41,7 +41,7 @@ function AppBarComponent() {
                   textDecoration: isActive ? 'underline' : 'none' // Underline when active
                 })}
               >
-                First
+                About Us
               </NavLink>
             </Button>
             <Button sx={{ '&:hover': { backgroundColor: 'transparent' } }}>
@@ -52,7 +52,7 @@ function AppBarComponent() {
                   textDecoration: isActive ? 'underline' : 'none' // Underline when active
                 })}
               >
-                Second
+                Spatial
               </NavLink>
             </Button>
             <Button sx={{ '&:hover': { backgroundColor: 'transparent' } }}>
@@ -63,7 +63,7 @@ function AppBarComponent() {
                   textDecoration: isActive ? 'underline' : 'none' // Underline when active
                 })}
               >
-                Third
+                Graph
               </NavLink>
             </Button>
             <Button sx={{ '&:hover': { backgroundColor: 'transparent' } }}>
@@ -74,7 +74,7 @@ function AppBarComponent() {
                   textDecoration: isActive ? 'underline' : 'none' // Underline when active
                 })}
               >
-                Fourth
+                Our Team
               </NavLink>
             </Button>
           </Box>

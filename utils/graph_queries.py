@@ -84,69 +84,52 @@ def specific_courses_prerequisities():
   """
   return query
 
+def determing_cert_pathway():
+  query = """
+  // Replace "PROGRAM_ID" with the actual program ID you want to analyze.
+  MATCH (p:Program {id: $id})<-[:PART_OF]-(requiredCourse:Course)
+  WITH p, collect(requiredCourse) AS requiredCourses
 
-class unusedQueries:
+  // Find students who are not yet certified in the program
+  MATCH (s:Student)
+  WHERE (s)-[:CERTIFIED_IN]->(p)
+  WITH s, p, requiredCourses
 
+  // Identify courses the student has completed in this program
+  OPTIONAL MATCH (s)-[en:ENROLLED_IN]->(c:Course)-[:PART_OF]->(p)
+  WHERE en.status = "P"
+  WITH s, p, requiredCourses, collect(DISTINCT c) AS completedCourses
 
+  // Determine which required courses are still missing
+  WITH s, p,
+       [course IN requiredCourses WHERE NOT course IN completedCourses] AS missingCourses
 
-    def find_master_and_satellite_courses():
-        query = """
-        MATCH (u:University)<-[:OFFERED_BY]-(program:Program)-[:PART_OF]->(c:Course)
-        WHERE c.master_satellite IN ['Master', 'Satellite']
-        RETURN u.name AS university, c.name AS course, c.master_satellite AS type
-        """
-        return query
+  RETURN 
+         s.id  AS student_id,
+         s.name AS student_name,
+         p.name AS program_name,
+         missingCourses AS needed_courses,
+         size(missingCourses) AS courses_remaining
+  ORDER BY courses_remaining ASC;
+  """
+  return query
 
+def ai_program_outreach_accessibility():
+    query = """
+    MATCH (s:Student)-[:CERTIFIED_IN]->(:Program)
 
-    def list_universities_sharing_similar_courses():
-        query = """
-        MATCH (u1:University)<-[:OFFERED_BY]-(p1:Program)-[:PART_OF]->(c:Course)-[:PART_OF]->(p2:Program)-[:OFFERED_BY]->(u2:University)
-        WHERE u1 <> u2
-        RETURN 
-            u1.name AS university1, 
-            u2.name AS university2, 
-            COLLECT(DISTINCT c.name) AS shared_courses
-        """
-        return query
-
-
-    def trace_student_enrollment_paths_across_universities():
-        query = """
-        MATCH (s:Student)-[:ENROLLED_IN]->(c:Course)-[:PART_OF]->(p:Program)-[:OFFERED_BY]->(u:University)
-        RETURN 
-            s.id AS student, 
-            COLLECT(DISTINCT u.name) AS university_path
-        """
-        return query
-
-
-    def recommend_courses_based_on_completed_TAICA_Certifications():
-        query = """
-        MATCH (s:Student)-[:CERTIFIED_IN]->(p:Program)<-[:PART_OF]-(c:Course)
-        WHERE NOT (s)-[:ENROLLED_IN]->(c)
-        RETURN 
-            s.id AS student, 
-            COLLECT(DISTINCT c.name) AS recommended_courses
-        """
-        return query
+    RETURN DISTINCT s.id AS student_id, s.university_id as university_id
+    """
+    return query
 
 
-    def streamline_administrative_tasks_by_mapping_course_dependencies():
-        query = """
-        MATCH (c1:Course)-[:REQUIRES]->(c2:Course)
-        RETURN 
-            c1.name AS course, 
-            COLLECT(c2.name) AS dependencies
-        """
-        return query
-
-
-    def analyze_TAICA_Certification_completion_pathways():
-        query = """
-        MATCH (s:Student)-[:CERTIFIED_IN]->(p:Program)
-        RETURN 
-            p.name AS TAICA_Certification, 
-            COUNT(s) AS completion_count
-        """
-        return query
-
+def illustrate_relationship_between_universities():
+  query = """
+  MATCH (taica:University)-[:OFFERS]->(course:Course { master_satellite: 'Satellite' })
+      -[:AFFILIATED_WITH]->(masterU:University)
+  RETURN taica   AS SatelliteSchool,
+       course  AS SatelliteCourse,
+       masterU AS MasterSchool;
+  """
+  
+  return query

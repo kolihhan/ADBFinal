@@ -114,7 +114,7 @@ MERGE (student)-[:CERTIFIED_IN]->(program);
 LOAD CSV WITH HEADERS FROM 'file:///Committee.csv' AS row
 MATCH (committee:Committee {id: row.Committee_ID})
 MATCH (university:University {id: row.Univ_ID})
-MERGE (committee)-[:AFFILIATED_WITH]->(university);
+MERGE (committee)-[:BELONGS_TO]->(university);
 
 // ========================================
 // Step 12: Load Enrollment Relationships
@@ -142,6 +142,17 @@ RETURN c1, c2, c3;
 MATCH (c4:Course {id: "6"}), (c5:Course {id: "1"}), (c6:Course {id: "16"})
 MERGE (c4)-[:PREREQUISITE_FOR]->(c5)
 RETURN c4, c5;
+
+MATCH (u:University)
+MATCH (course:Course {university_id: u.id})
+MERGE (u)-[:OFFERS]->(course);
+
+
+MATCH (course:Course)
+WHERE course.master_satellite = 'Satellite'
+MERGE (masterU:University { university_id: course.master_university_id })
+MERGE (course)-[:AFFILIATED_WITH]->(masterU);
+
 
 
 

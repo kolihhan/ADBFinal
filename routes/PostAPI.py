@@ -32,3 +32,27 @@ def post_query_student():
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    
+    
+    
+@bp.route('/post_query_determing_cert_pathway', methods=['POST'])
+def post_query_determing_cert_pathway():
+    try:
+        # Get the data from the form
+        program_id = request.form.get('program-id')
+        
+        # Validate input
+        if not program_id:
+            return jsonify({'error': 'ID is required'}), 400
+
+        student_info = graph_queries.get_student_details()
+        result = execute_neo4j_query(student_info, {"id": program_id})
+        
+        
+        if not student_info:
+            return jsonify({'error': 'Student not found'}), 404
+
+        return jsonify({'program_id': program_id, 'info': result}), 200
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500

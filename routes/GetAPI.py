@@ -172,6 +172,65 @@ def get_program_courses_with_their_prerequisites():
 
 
 
+@bp.route("/get_ai_program_outreach_accessibility", methods=["GET"])
+def get_ai_program_outreach_accessibility():
+    """
+    Assess the accessibility of a particular TAICA (AI) program across different regions. 
+    This query aggregates how many students from various universities/locations are pursuing or certified in the TAICA program, which can help identify underserved areas.
+    
+    """
+    # Step 1: Get student IDs and university IDs from Neo4j
+    neo_query = graph_queries.ai_program_outreach_accessibility()
+    neo_result = execute_neo4j_query(neo_query)
+    
+    student_uni_pairs = [(record["student_id"], record["university_id"]) for record in neo_result]
+
+    if not student_uni_pairs:
+        return jsonify({
+            "type": "FeatureCollection",
+            "features": [],
+            "message": "No certified students found."
+        }), 200
+
+    placeholders = ','.join(['(%s, %s)'] * len(student_uni_pairs))
+    query = spatial_queries.count_student_has_cert().format(
+        placeholders=placeholders
+    )
+    
+    query_params = [value for pair in student_uni_pairs for value in pair]
+    results = execute_pg_query(query, query_params)
+
+    features = []
+    for row in results:
+        name, total_student, geom = row
+
+        features.append({
+            "type": "Feature",
+            "properties": {"name": name, "count_student": total_student},
+            "geometry": json.loads(geom)
+        })
+
+    geojson = {
+        "type": "FeatureCollection",
+        "features": features
+    }
+
+    return jsonify(geojson)
+
+
+@bp.route("/get_illustrate_relationship_between_universities", methods=["GET"])
+def get_illustrate_relationship_between_universities():
+    """
+    Illustrate the relationship between universities, master course and satellite course.
+    """
+    neo_query = graph_queries.illustrate_relationship_between_universities()
+    neo_result = execute_neo4j_query(neo_query)
+    
+    return jsonify(neo_result)
+
+
+
+
 @bp.route('/')
 def index():
     return render_template('index.html')

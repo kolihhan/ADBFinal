@@ -8,14 +8,14 @@ POSTGRES = {
     'port': 5432,
     'database': 'finaladb',
     'user': 'postgres',
-    'password': 'billpostgre' #Make Sure change to ur user/password
+    'password': 'testXD12345' #Make Sure change to ur user/password
 }
 
 # Neo4J DB
 NEO4J = {
     'uri': 'bolt://localhost:7687',
     'user': 'neo4j',
-    'password': 'billneo4j'
+    'password': 'finaladb'
 }
 
 

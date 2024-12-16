@@ -45,12 +45,12 @@ def post_query_determing_cert_pathway():
         if not program_id:
             return jsonify({'error': 'ID is required'}), 400
 
-        student_info = graph_queries.get_student_details()
+        student_info = graph_queries.determing_cert_pathway()
         result = execute_neo4j_query(student_info, {"id": program_id})
         
         
         if not student_info:
-            return jsonify({'error': 'Student not found'}), 404
+            return jsonify({'error': 'Program not found'}), 404
 
         return jsonify({'program_id': program_id, 'info': result}), 200
 

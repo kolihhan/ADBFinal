@@ -52,6 +52,13 @@ def get_university_ids_and_names():
     """
     return query
 
+def get_program_ids_and_names():
+    query = """
+    MATCH (p:Program)
+    RETURN p.id AS program_id, p.name AS program_name
+    """
+    return query
+
 def count_students_with_TAICA_Certifications():
     query = """
     MATCH (s:Student)-[:CERTIFIED_IN]->(:Program)

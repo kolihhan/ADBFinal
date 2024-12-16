@@ -98,6 +98,22 @@ def get_university_ids_and_names():
     
     return jsonify(response)
 
+@bp.route("/get_program_ids_and_names", methods=["GET"])
+def get_program_ids_and_names():
+    """
+    Get program IDs and names from the Neo4j database
+    """
+    # Step 1: Get the query from graph_queries
+    query = graph_queries.get_program_ids_and_names()
+    
+    # Step 2: Execute the query
+    results = execute_neo4j_query(query)
+    
+    # Step 3: Format the results into a JSON response
+    response = [{"program_id": record["program_id"], "program_name": record["program_name"]} for record in results]
+    
+    return jsonify(response)
+
 @bp.route("/random_student_uni", methods=["GET"])
 def get_random_student_nearest_uni():
     """
@@ -221,7 +237,7 @@ def get_ai_program_outreach_accessibility():
 
         features.append({
             "type": "Feature",
-            "properties": {"name": name, "count_student": total_student},
+            "properties": {"name": name, "count": total_student},
             "geometry": json.loads(geom)
         })
 

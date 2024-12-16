@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Button, Box, Typography } from '@mui/material';
 
-function AppBarComponenttwo({ fetchUnivGeoJSON, fetchAreaStudentGeoJson, handleCloseDrawer, fetchLowUniv, fetchStudentWithCert }) {
+function AppBarComponenttwo({ fetchUnivGeoJSON, fetchAreaStudentGeoJson, handleCloseDrawer, fetchLowUniv, fetchStudentWithCert, fetchAccessibility }) {
   return (
     <Box sx={{
       display: 'flex', 
@@ -75,6 +75,22 @@ function AppBarComponenttwo({ fetchUnivGeoJSON, fetchAreaStudentGeoJson, handleC
         }}
       >
         <Typography variant="button">Low TAICA Reach</Typography>
+      </Button>
+      <Button 
+        onClick={() => { 
+          fetchAccessibility(); 
+          handleCloseDrawer(); 
+        }} 
+        sx={{
+          '&:hover': { backgroundColor: '#5d1c90' }, 
+          margin: '0 15px',
+          backgroundColor: '#5d1c60',
+          color: 'white',
+          borderRadius: '5px',
+          padding: '10px 20px',
+        }}
+      >
+        <Typography variant="button">TAICA Accessibility</Typography>
       </Button>
       
     </Box>

@@ -1,7 +1,9 @@
 import React from 'react';
 import AppBarComponent from '../components/AppBarComponent.js'; // Adjust the path as needed
+import Footer from '../components/FooterComponent.js';
 import { Card, CardContent, CardMedia, Grid, Typography, Box, Link } from '@mui/material';
 import { styled } from '@mui/system';
+import { motion } from 'framer-motion'; // Import Framer Motion
 
 const TeamContainer = styled(Box)(({ theme }) => ({
   padding: theme.spacing(4),
@@ -18,17 +20,13 @@ const TeamTitle = styled(Typography)(({ theme }) => ({
   color: theme.palette.secondary.main,
 }));
 
-const TeamCard = styled(Card)(({ theme }) => ({
+const TeamCard = styled(motion(Card))(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
   boxShadow: theme.shadows[6],
   borderRadius: theme.shape.borderRadius,
   overflow: 'hidden',
-  transition: 'transform 0.3s ease',
-  '&:hover': {
-    transform: 'scale(1.05)',
-  },
   backgroundColor: theme.palette.background.paper,
 }));
 
@@ -44,7 +42,12 @@ const TeamImage = styled(CardMedia)(({ theme }) => ({
 
 const TeamMember = ({ name, role, image, linkedin }) => (
   <Link href={linkedin} target="_blank" rel="noopener" underline="none">
-    <TeamCard>
+    <TeamCard
+      whileHover={{ scale: 1.1 }}
+      initial={{ opacity: 0, y: 50 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
       <TeamImage component="img" image={image} alt={`${name}'s photo`} />
       <CardContent>
         <Typography variant="h6" component="h2" align="center" color="textPrimary">
@@ -112,6 +115,7 @@ export const FourthPage = () => {
           </Grid>
         </Grid>
       </TeamContainer>
+      <Footer />
     </div>
   );
 };

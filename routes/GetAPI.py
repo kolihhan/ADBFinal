@@ -47,7 +47,7 @@ def get_count_student_per_region():
         name, student_count, geom = row
         features.append({
             "type": "Feature",
-            "properties": {"name": name, "student_count": student_count},
+            "properties": {"name": name, "count": student_count},
             "geometry": json.loads(geom) 
         })
     
@@ -71,7 +71,7 @@ def get_count_low_student_region():
         name, student_count, geom = row
         features.append({
             "type": "Feature",
-            "properties": {"name": name, "student_count": student_count},
+            "properties": {"name": name, "count": student_count},
             "geometry": json.loads(geom) 
         })
     
@@ -82,6 +82,21 @@ def get_count_low_student_region():
     
     return jsonify(geojson)
 
+@bp.route("/get_university_ids_and_names", methods=["GET"])
+def get_university_ids_and_names():
+    """
+    Get university IDs and names from the Neo4j database
+    """
+    # Step 1: Get the query from graph_queries
+    query = graph_queries.get_university_ids_and_names()
+    
+    # Step 2: Execute the query
+    results = execute_neo4j_query(query)
+    
+    # Step 3: Format the results into a JSON response
+    response = [{"university_id": record["university_id"], "university_name": record["university_name"]} for record in results]
+    
+    return jsonify(response)
 
 @bp.route("/random_student_uni", methods=["GET"])
 def get_random_student_nearest_uni():
@@ -148,7 +163,7 @@ def get_student_with_cert():
 
         features.append({
             "type": "Feature",
-            "properties": {"name": name, "count_student": total_student},
+            "properties": {"name": name, "count": total_student},
             "geometry": json.loads(geom)
         })
 

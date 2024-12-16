@@ -45,6 +45,12 @@ def get_student_details():
     """
     return query
 
+def get_university_ids_and_names():
+    query = """
+    MATCH (u:University)
+    RETURN u.id AS university_id, u.name AS university_name
+    """
+    return query
 
 def count_students_with_TAICA_Certifications():
     query = """

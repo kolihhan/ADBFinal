@@ -26,39 +26,7 @@ function AppBarComponenttwo({ fetchUnivGeoJSON, fetchAreaStudentGeoJson, handleC
           padding: '10px 20px',
         }}
       >
-        <Typography variant="button">University</Typography>
-      </Button>
-      <Button 
-        onClick={() => { 
-          fetchAreaStudentGeoJson(); 
-          handleCloseDrawer(); 
-        }} 
-        sx={{
-          '&:hover': { backgroundColor: '#5d1c90' }, 
-          margin: '0 15px',
-          backgroundColor: '#5d1c60',
-          color: 'white',
-          borderRadius: '5px',
-          padding: '10px 20px',
-        }}
-      >
-        <Typography variant="button">Area</Typography>
-      </Button>
-      <Button 
-        onClick={() => { 
-          fetchLowUniv(); 
-          handleCloseDrawer(); 
-        }} 
-        sx={{
-          '&:hover': { backgroundColor: '#5d1c90' }, 
-          margin: '0 15px',
-          backgroundColor: '#5d1c60',
-          color: 'white',
-          borderRadius: '5px',
-          padding: '10px 20px',
-        }}
-      >
-        <Typography variant="button">Low Taica</Typography>
+        <Typography variant="button">Taiwan Uni</Typography>
       </Button>
       <Button 
         onClick={() => { 
@@ -74,8 +42,41 @@ function AppBarComponenttwo({ fetchUnivGeoJSON, fetchAreaStudentGeoJson, handleC
           padding: '10px 20px',
         }}
       >
-        <Typography variant="button">What</Typography>
+        <Typography variant="button">TAICA Uni</Typography>
       </Button>
+      <Button 
+        onClick={() => { 
+          fetchAreaStudentGeoJson(); 
+          handleCloseDrawer(); 
+        }} 
+        sx={{
+          '&:hover': { backgroundColor: '#5d1c90' }, 
+          margin: '0 15px',
+          backgroundColor: '#5d1c60',
+          color: 'white',
+          borderRadius: '5px',
+          padding: '10px 20px',
+        }}
+      >
+        <Typography variant="button">TAICA Cities</Typography>
+      </Button>
+      <Button 
+        onClick={() => { 
+          fetchLowUniv(); 
+          handleCloseDrawer(); 
+        }} 
+        sx={{
+          '&:hover': { backgroundColor: '#5d1c90' }, 
+          margin: '0 15px',
+          backgroundColor: '#5d1c60',
+          color: 'white',
+          borderRadius: '5px',
+          padding: '10px 20px',
+        }}
+      >
+        <Typography variant="button">Low TAICA Reach</Typography>
+      </Button>
+      
     </Box>
   );
 }

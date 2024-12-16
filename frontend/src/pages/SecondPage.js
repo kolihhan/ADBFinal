@@ -19,7 +19,27 @@ export const SecondPage = () => {
   const [areaGeoJSONReady, setAreaGeoJSONReady] = useState(false);
   const [lowUnivJsonReady,setLowUnivJSONReady] = useState(false);
   const [studentWithCertReady,setStudentWithCertReady] = useState(false);
+  const [accessibilityReady,setAccessibilityReady] = useState(false);
 
+  const fetchAccessibility = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/get_ai_program_outreach_accessibility');
+      if (!response.ok) {
+        throw new Error('Failed to fetch GeoJSON');
+      }
+      
+      const data = await response.json();
+      console.log(data);
+      setGeojsonData(data);
+      setUnivGeoJSONReady(false);
+      setAreaGeoJSONReady(false);
+      setLowUnivJSONReady(false);
+      setStudentWithCertReady(false);
+      setAccessibilityReady(true);
+    } catch (error) {
+      console.error('Error fetching GeoJSON:', error);
+    }
+  };
     const fetchUnivGeoJSON = async () => {
       try {
         const response = await fetch('http://localhost:5000/universities');
@@ -28,12 +48,13 @@ export const SecondPage = () => {
         }
         
         const data = await response.json();
-        console.log(geojsonData);
+        console.log(data);
         setGeojsonData(data);
         setUnivGeoJSONReady(true);
         setAreaGeoJSONReady(false);
         setLowUnivJSONReady(false);
         setStudentWithCertReady(false);
+        setAccessibilityReady(false);
       } catch (error) {
         console.error('Error fetching GeoJSON:', error);
       }
@@ -46,11 +67,13 @@ export const SecondPage = () => {
           throw new Error('Failed to fetch GeoJSON');
         }
         const data = await response.json();
+        console.log(data);
         setGeojsonData(data);
         setUnivGeoJSONReady(false);
         setAreaGeoJSONReady(true);
         setLowUnivJSONReady(false);
         setStudentWithCertReady(false);
+        setAccessibilityReady(false);
       } catch (error) {
         console.error('Error fetching GeoJSON:', error);
       }
@@ -63,11 +86,13 @@ export const SecondPage = () => {
         }
         
         const data = await response.json();
+        console.log(data);
         setGeojsonData(data);
         setUnivGeoJSONReady(false);
         setAreaGeoJSONReady(false);
         setLowUnivJSONReady(true);
         setStudentWithCertReady(false);
+        setAccessibilityReady(false);
       } catch (error) {
         console.error('Error fetching GeoJSON:', error);
       }
@@ -80,11 +105,13 @@ export const SecondPage = () => {
         }
         
         const data = await response.json();
+        console.log(data);
         setGeojsonData(data);
         setUnivGeoJSONReady(false);
         setAreaGeoJSONReady(false);
-        setLowUnivJSONReady(true);
-        setStudentWithCertReady(false);
+        setLowUnivJSONReady(false);
+        setStudentWithCertReady(true);
+        setAccessibilityReady(false);
       } catch (error) {
         console.error('Error fetching GeoJSON:', error);
       }
@@ -155,7 +182,7 @@ export const SecondPage = () => {
   
           // Clear previous route if it exists
           if (routeControlRef.current) {
-            map.removeControl(routeControlRef.current);
+            //map.removeControl(routeControlRef.current);
           }
           L.Icon.Default.mergeOptions({
             iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
@@ -214,7 +241,7 @@ export const SecondPage = () => {
 
       {/* University Selector */}
       
-      {(!areaGeoJSONReady) && geojsonData  && (
+      {(!areaGeoJSONReady && !lowUnivJsonReady) && geojsonData  && (
         <div style={{ margin: '10px', textAlign: 'center' }}>
           <select
             value={selectedId !== null ? selectedId : ''} // Set dropdown value to selected university index
@@ -300,7 +327,10 @@ export const SecondPage = () => {
         <AppBarComponenttwo fetchAreaStudentGeoJson = {fetchAreaStudentGeoJson} 
         fetchUnivGeoJSON = {fetchUnivGeoJSON} fetchLowUniv = {fetchLowUniv} 
         fetchStudentWithCert = {fetchStudentWithCert}
-        handleCloseDrawer = {handleCloseDrawer}/>
+        handleCloseDrawer = {handleCloseDrawer}
+        fetchAccessibility = {fetchAccessibility}
+        />
+        
       </Box>
 
       {/* Non-blocking Drawer for Feature Details */}
